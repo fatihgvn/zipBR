@@ -40,6 +40,12 @@ if __name__ == "__main__":
         key = None
         keylen = 0
 
+        path = os.path.dirname(os.path.abspath(args.file))
+        path = os.path.join(path, os.path.splitext(os.path.basename(args.file))[0])
+        
+        if not os.path.exists(path):
+            os.makedirs(path)
+
         startTime = datetime.datetime.now()
 
         print ("Start Time %s" % str(startTime))
@@ -48,10 +54,10 @@ if __name__ == "__main__":
 
             if keylen != len(key):
                 keylen = len(key)
-                print("Testing %d digit passwords" % keylen)
+                print("Trying a %d-digit password" % keylen)
 
-            if zip.check(args.file, key):
-                print("password is ", key)
+            if zip.check(args.file, key, path):
+                print("password is %s" % key)
                 break
 
 
