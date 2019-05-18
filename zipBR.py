@@ -31,24 +31,6 @@ parser.add_argument("--core", help="Maximum number of cores to use", default=1, 
 args = parser.parse_args()
 
 
-def runBrute(generator, file, startkey = None):
-    key = generator.next(startkey)
-    keylen = 0
-    while True:
-
-        if keylen != len(key):
-            keylen = len(key)
-            print("Trying a %d-digit password" % keylen)
-
-        if zip.check(args.file, key, path):
-            print("password is %s" % key)
-            return True
-
-        key = generator.next(key)
-
-    return False
-
-
 if __name__ == "__main__":
     
     if args.version:
@@ -88,12 +70,20 @@ if __name__ == "__main__":
 
         pool = ThreadPool(processes=args.core)
 
-        async_result = pool.apply_async(runBrute, (generator, args.file))
-
         while True:
+            key = generator.next(key)
+            
+            async_result = pool.apply_async(zip.check, (args.file, key, path))
+
+            if keylen != len(key):
+                keylen = len(key)
+                print("Trying a %d-digit password" % keylen)
+
             return_val = async_result.get()
 
-            
+            if return_val == True:
+                print("password is %s" % key)
+                break
                     
 
 
