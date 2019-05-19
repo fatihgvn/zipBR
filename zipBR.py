@@ -78,9 +78,7 @@ if __name__ == "__main__":
                     keylen = len(key)
                     print("Trying a %d-digit password" % keylen)
 
-                return_val = async_result.get()
-
-                if return_val == True:
+                if async_result == True:
                     print("password is %s" % key)
                     break
                     
