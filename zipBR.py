@@ -4,7 +4,7 @@
 import argparse, time, os, datetime
 from lib import keygenerator
 from lib import zip
-from multiprocessing import Pool
+import multiprocessing 
 
 
 def version():
@@ -65,23 +65,29 @@ if __name__ == "__main__":
         startTime = datetime.datetime.now()
 
         print ("Start Time %s" % str(startTime))
-        
+        processes = []
+        pool = multiprocessing.Pool()
+
         while True:
-            with Pool() as pool:
-                key = generator.next(key)
+            key = generator.next(key)
 
-                print("Checked %s" % key, end='\r')
+            print("Checked %s" % key, end='\r')
 
-                if keylen != len(key):
-                    keylen = len(key)
-                    print("Trying a %d-digit password" % keylen)
+            if keylen != len(key):
+                keylen = len(key)
+                print("Trying a %d-digit password" % keylen)
 
-                ret = pool.apply(zip.check, (args.file, key, path))
+            collect_results = False
 
-                if ret:
-                    print("password is %s" % key)
-                    break
+            p = pool.apply_async(zip.check, args=(args.file, key, path,), callback=collect_results)
 
+            # if zip.check(args.file, key, path):
+            if collect_results:
+                print("password is %s" % key)
+                break
+
+        for process in processes:
+            process.join()
 
         endTime = datetime.datetime.now()
         print ("End Time %s" % str(endTime))
