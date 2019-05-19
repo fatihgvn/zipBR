@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
             while True:
                 key = generator.next(key)
-                
+                print("Checked %s" % key, end='')
                 async_result = pool.apply(zip.check, (args.file, key, path))
 
                 if keylen != len(key):
