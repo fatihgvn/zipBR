@@ -4,7 +4,8 @@
 import argparse, time, os, datetime
 from lib import keygenerator
 from lib import zip
-import multiprocessing 
+import multiprocessing
+import threading
 
 
 def version():
@@ -26,14 +27,32 @@ parser.add_argument("-n","--useNumbers", help="Use all figures", action="store_t
 parser.add_argument("-s","--useSpecialChars", help="Use special characters", action="store_true")
 parser.add_argument("-p","--useSpace", help="Use <SPACE> character", action="store_true")
 parser.add_argument("-v","--version", help="Show version number", action='store_true')
+parser.add_argument("-k","--key", help="initial password value")
 
 args = parser.parse_args()
 
 
-bruteTrue = None
+def runBrute(args, generator):
+    pool = multiprocessing.Pool()
 
-def collect_results(x):
-    print(x)
+    key = args.key
+    keylen = 0
+
+    while True:
+        key = generator.next(key)
+
+        print("Checked %s" % key, end='\r')
+
+        if keylen != len(key):
+            keylen = len(key)
+            print("Trying a %d-digit password" % keylen)
+
+        p = pool.apply_async(zip.check, args=(args.file, key, path,))
+
+        # if zip.check(args.file, key, path):
+        if p.get():
+            print("password is %s" % key)
+            break
 
 if __name__ == "__main__":
     
@@ -43,11 +62,13 @@ if __name__ == "__main__":
     if not args.file:
         exit("please first specify the archive file location")
 
+    if not os.path.isfile(args.file):
+        exit("No such file found")
+
+    startTime = datetime.datetime.now()
+    print ("Start Time %s" % str(startTime))
 
     try:
-
-        if not os.path.isfile(args.file):
-            exit("No such file found")
 
         if args.all:
             generator = keygenerator.Generator()
@@ -58,39 +79,18 @@ if __name__ == "__main__":
                 args.useSpecialChars, 
                 args.useSpace)
 
-        key = None
-        keylen = 0
-
         path = os.path.dirname(os.path.abspath(args.file))
         path = os.path.join(path, os.path.splitext(os.path.basename(args.file))[0])
         
         if not os.path.exists(path):
             os.makedirs(path)
-
-        startTime = datetime.datetime.now()
-
-        print ("Start Time %s" % str(startTime))
         
-        pool = multiprocessing.Pool()
+        thread = threading.Thread(target = runBrute, args = (args, generator))
+        thread.start()
+        thread.join()
 
-        while True:
-            key = generator.next(key)
-
-            print("Checked %s" % key, end='\r')
-
-            if keylen != len(key):
-                keylen = len(key)
-                print("Trying a %d-digit password" % keylen)
-
-            collect_results = False
-
-            p = pool.apply_async(zip.check, args=(args.file, key, path,))
-
-            # if zip.check(args.file, key, path):
-            if p.get():
-                print("password is %s" % bruteTrue)
-                break
-
+    except KeyboardInterrupt:
+        exit(1)
 
         endTime = datetime.datetime.now()
         print ("End Time %s" % str(endTime))
@@ -99,5 +99,4 @@ if __name__ == "__main__":
         print ("Total time %s" % str(delta))
 
 
-    except KeyboardInterrupt:
-        pass
+    
