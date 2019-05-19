@@ -4,8 +4,7 @@
 import argparse, time, os, datetime
 from lib import keygenerator
 from lib import zip
-from multiprocessing.pool import ThreadPool
-
+from multiprocessing import Pool, freeze_support
 
 def version():
     major = 1
@@ -29,24 +28,6 @@ parser.add_argument("-v","--version", help="Show version number", action='store_
 parser.add_argument("--core", help="Maximum number of cores to use", default=1, type=int)
 
 args = parser.parse_args()
-
-
-def runBrute(generator, file, startkey = None):
-    key = generator.next(startkey)
-    keylen = 0
-    while True:
-
-        if keylen != len(key):
-            keylen = len(key)
-            print("Trying a %d-digit password" % keylen)
-
-        if zip.check(args.file, key, path):
-            print("password is %s" % key)
-            return True
-
-        key = generator.next(key)
-
-    return False
 
 
 if __name__ == "__main__":
@@ -86,14 +67,22 @@ if __name__ == "__main__":
         print ("Start Time %s" % str(startTime))
 
 
-        pool = ThreadPool(processes=args.core)
+        with Pool() as pool:
 
-        async_result = pool.apply_async(runBrute, (generator, args.file))
+            while True:
+                key = generator.next(key)
+                
+                async_result = pool.apply(zip.check, (args.file, key, path))
 
-        while True:
-            return_val = async_result.get()
+                if keylen != len(key):
+                    keylen = len(key)
+                    print("Trying a %d-digit password" % keylen)
 
-            
+                return_val = async_result.get()
+
+                if return_val == True:
+                    print("password is %s" % key)
+                    break
                     
 
 
