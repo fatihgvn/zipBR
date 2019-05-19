@@ -65,8 +65,9 @@ if __name__ == "__main__":
         startTime = datetime.datetime.now()
 
         print ("Start Time %s" % str(startTime))
-        with Pool() as pool:
-            while True:
+        
+        while True:
+            with Pool() as pool:
                 key = generator.next(key)
 
                 print("Checked %s" % key, end='\r')
