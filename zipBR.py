@@ -67,7 +67,7 @@ if __name__ == "__main__":
         print ("Start Time %s" % str(startTime))
         while True:
             key = generator.next(key)
-
+            print("Checked %s" % key, end='\r')
             if keylen != len(key):
                 keylen = len(key)
                 print("Trying a %d-digit password" % keylen)
