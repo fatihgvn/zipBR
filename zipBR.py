@@ -71,15 +71,15 @@ if __name__ == "__main__":
 
             while True:
                 key = generator.next(key)
-                print("Checked %s" % key, end='')
+                print("Checked %s" % key, end='\r')
                 async_result = pool.apply(zip.check, (args.file, key, path))
 
                 if keylen != len(key):
                     keylen = len(key)
-                    print("Trying a %d-digit password" % keylen)
+                    print("\nTrying a %d-digit password" % keylen)
 
                 if async_result == True:
-                    print("password is %s" % key)
+                    print("\npassword is %s" % key)
                     break
                     
 
