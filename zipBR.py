@@ -37,7 +37,6 @@ BruteKey = None
 def syncBrutes():
     global testedKey, BruteKey
     while True:
-        print(testedKey)
         for key in testedKey:
             data = key.get()
             print("Checked %s" % data, end='\r')
@@ -82,10 +81,12 @@ if __name__ == "__main__":
     key = args.key
     keylen = 0
 
+    thread = threading.Thread(target = syncBrutes)
+    thread.start()
+    thread.join()
+
     while True:
         key = generator.next(key)
-
-       
 
         if keylen != len(key):
             keylen = len(key)
@@ -98,9 +99,6 @@ if __name__ == "__main__":
             print("password is %s" % BruteKey)
             break
     
-    thread = threading.Thread(target = syncBrutes)
-    thread.start()
-    thread.join()
 
     endTime = datetime.datetime.now()
     print ("End Time %s" % str(endTime))
