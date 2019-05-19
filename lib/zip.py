@@ -6,6 +6,6 @@ def check(name, password, folder):
     try:
         with ZipFile(name) as zf:
             zf.extractall(path=folder, pwd=bytes(password,'utf-8'))
-            return True
+            return password
     except:
         return False
