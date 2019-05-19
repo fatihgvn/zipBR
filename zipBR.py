@@ -83,7 +83,6 @@ if __name__ == "__main__":
 
     thread = threading.Thread(target = syncBrutes)
     thread.start()
-    thread.join()
 
     while True:
         key = generator.next(key)
@@ -99,6 +98,7 @@ if __name__ == "__main__":
             print("password is %s" % BruteKey)
             break
     
+    thread.join()
 
     endTime = datetime.datetime.now()
     print ("End Time %s" % str(endTime))
