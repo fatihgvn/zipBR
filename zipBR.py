@@ -39,6 +39,7 @@ def syncBrutes():
     while True:
         for key in testedKey:
             data = key.get()
+            print("Checked %s" % data, end='\r')
             if not data is str:
                 testedKey.remove(key)
             else:
@@ -83,7 +84,7 @@ if __name__ == "__main__":
     while True:
         key = generator.next(key)
 
-        print("Checked %s" % key, end='\r')
+       
 
         if keylen != len(key):
             keylen = len(key)
@@ -91,7 +92,7 @@ if __name__ == "__main__":
 
         p = pool.apply_async(zip.check, args=(args.file, key, path,))
         testedKey.append(p)
-        
+
         if not BruteKey == None:
             print("password is %s" % BruteKey)
             break
