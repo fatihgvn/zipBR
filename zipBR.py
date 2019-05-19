@@ -4,7 +4,7 @@
 import argparse, time, os, datetime
 from lib import keygenerator
 from lib import zip
-from threading import Thread
+from multiprocessing import Pool
 
 
 def version():
@@ -65,16 +65,21 @@ if __name__ == "__main__":
         startTime = datetime.datetime.now()
 
         print ("Start Time %s" % str(startTime))
-        while True:
-            key = generator.next(key)
-            print("Checked %s" % key, end='\r')
-            if keylen != len(key):
-                keylen = len(key)
-                print("Trying a %d-digit password" % keylen)
+        with Pool() as pool:
+            while True:
+                key = generator.next(key)
 
-            if zip.check(args.file, key, path):
-                print("password is %s" % key)
-                break
+                print("Checked %s" % key, end='\r')
+
+                if keylen != len(key):
+                    keylen = len(key)
+                    print("Trying a %d-digit password" % keylen)
+
+                ret = pool.apply(zip.check, (args.file, key, path))
+
+                if ret:
+                    print("password is %s" % key)
+                    break
 
 
         endTime = datetime.datetime.now()
