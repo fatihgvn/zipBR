@@ -31,28 +31,18 @@ parser.add_argument("-k","--key", help="initial password value")
 
 args = parser.parse_args()
 
+testedKey = []
+BruteKey = None
 
-def runBrute(args, generator):
-    pool = multiprocessing.Pool()
-
-    key = args.key
-    keylen = 0
-
+def syncBrutes():
+    global testedKey, BruteKey
     while True:
-        key = generator.next(key)
-
-        print("Checked %s" % key, end='\r')
-
-        if keylen != len(key):
-            keylen = len(key)
-            print("Trying a %d-digit password" % keylen)
-
-        p = pool.apply_async(zip.check, args=(args.file, key, path,))
-
-        # if zip.check(args.file, key, path):
-        if p.get():
-            print("password is %s" % key)
-            break
+        for key in testedKey:
+            if not key is str:
+                testedKey.remove(key)
+            else:
+                BruteKey = key
+                break
 
 if __name__ == "__main__":
     
@@ -83,8 +73,28 @@ if __name__ == "__main__":
     
     if not os.path.exists(path):
         os.makedirs(path)
+
+    pool = multiprocessing.Pool()
+
+    key = args.key
+    keylen = 0
+
+    while True:
+        key = generator.next(key)
+
+        print("Checked %s" % key, end='\r')
+
+        if keylen != len(key):
+            keylen = len(key)
+            print("Trying a %d-digit password" % keylen)
+
+        p = pool.apply_async(zip.check, args=(args.file, key, path,))
+
+        if not BruteKey == None:
+            print("password is %s" % BruteKey)
+            break
     
-    thread = threading.Thread(target = runBrute, args = (args, generator))
+    thread = threading.Thread(target = syncBrutes)
     thread.start()
     thread.join()
 
