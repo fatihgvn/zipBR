@@ -68,35 +68,31 @@ if __name__ == "__main__":
     startTime = datetime.datetime.now()
     print ("Start Time %s" % str(startTime))
 
-    try:
 
-        if args.all:
-            generator = keygenerator.Generator()
-        else:
-            generator = keygenerator.Generator(
-                args.useChars,
-                args.useNumbers, 
-                args.useSpecialChars, 
-                args.useSpace)
+    if args.all:
+        generator = keygenerator.Generator()
+    else:
+        generator = keygenerator.Generator(
+            args.useChars,
+            args.useNumbers, 
+            args.useSpecialChars, 
+            args.useSpace)
 
-        path = os.path.dirname(os.path.abspath(args.file))
-        path = os.path.join(path, os.path.splitext(os.path.basename(args.file))[0])
-        
-        if not os.path.exists(path):
-            os.makedirs(path)
-        
-        thread = threading.Thread(target = runBrute, args = (args, generator))
-        thread.start()
-        thread.join()
+    path = os.path.dirname(os.path.abspath(args.file))
+    path = os.path.join(path, os.path.splitext(os.path.basename(args.file))[0])
+    
+    if not os.path.exists(path):
+        os.makedirs(path)
+    
+    thread = threading.Thread(target = runBrute, args = (args, generator))
+    thread.start()
+    thread.join()
 
-    except KeyboardInterrupt:
-        exit(1)
+    endTime = datetime.datetime.now()
+    print ("End Time %s" % str(endTime))
 
-        endTime = datetime.datetime.now()
-        print ("End Time %s" % str(endTime))
-
-        delta = endTime - startTime
-        print ("Total time %s" % str(delta))
+    delta = endTime - startTime
+    print ("Total time %s" % str(delta))
 
 
     
