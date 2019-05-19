@@ -30,6 +30,11 @@ parser.add_argument("-v","--version", help="Show version number", action='store_
 args = parser.parse_args()
 
 
+bruteTrue = None
+
+def collect_results(x):
+    print(x)
+
 if __name__ == "__main__":
     
     if args.version:
@@ -65,7 +70,7 @@ if __name__ == "__main__":
         startTime = datetime.datetime.now()
 
         print ("Start Time %s" % str(startTime))
-        processes = []
+        
         pool = multiprocessing.Pool()
 
         while True:
@@ -79,15 +84,13 @@ if __name__ == "__main__":
 
             collect_results = False
 
-            p = pool.apply_async(zip.check, args=(args.file, key, path,), callback=collect_results)
+            p = pool.apply_async(zip.check, args=(args.file, key, path,))
 
             # if zip.check(args.file, key, path):
-            if collect_results:
-                print("password is %s" % key)
+            if p.get():
+                print("password is %s" % bruteTrue)
                 break
 
-        for process in processes:
-            process.join()
 
         endTime = datetime.datetime.now()
         print ("End Time %s" % str(endTime))
