@@ -76,10 +76,10 @@ if __name__ == "__main__":
 
                 if keylen != len(key):
                     keylen = len(key)
-                    print("\nTrying a %d-digit password" % keylen)
+                    print("Trying a %d-digit password" % keylen)
 
                 if async_result == True:
-                    print("\npassword is %s" % key)
+                    print("password is %s" % key)
                     break
                     
 
