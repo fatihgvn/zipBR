@@ -37,6 +37,7 @@ BruteKey = None
 def syncBrutes():
     global testedKey, BruteKey
     while True:
+        print(testedKey)
         for key in testedKey:
             data = key.get()
             print("Checked %s" % data, end='\r')
