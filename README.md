@@ -6,7 +6,7 @@ Only available for ZIP archives.
 
 ## Program parameters
 
-usage: zipBR.exe [-h] [-f FILE] [-a] [-c] [-n] [-s] [-p]
+usage: zipBR.exe [-h] [-f FILE] [-a] [-c] [-n] [-s] [-p] [-k]
 
 short | long | explanation
 ------|------|------------
@@ -17,6 +17,7 @@ short | long | explanation
 -n| --useNumbers     | Use all figures
 -s| --useSpecialChars| Use special characters
 -p| --useSpace       | Use <SPACE> character
+-k| --skey           | Determine the key to start with
 -v| --version        | Show version number
 
 

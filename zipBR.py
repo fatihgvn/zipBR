@@ -25,6 +25,7 @@ parser.add_argument("-c","--useChars", help="Use all letters from a to Z", actio
 parser.add_argument("-n","--useNumbers", help="Use all figures", action="store_true")
 parser.add_argument("-s","--useSpecialChars", help="Use special characters", action="store_true")
 parser.add_argument("-p","--useSpace", help="Use <SPACE> character", action="store_true")
+parser.add_argument("-k","--skey", help="Determine the key to start with")
 parser.add_argument("-v","--version", help="Show version number", action='store_true')
 
 args = parser.parse_args()
@@ -52,9 +53,12 @@ if __name__ == "__main__":
                 args.useNumbers, 
                 args.useSpecialChars, 
                 args.useSpace)
-
+	
         key = None
         keylen = 0
+        
+        if args.skey:
+            key = args.skey
 
         path = os.path.dirname(os.path.abspath(args.file))
         path = os.path.join(path, os.path.splitext(os.path.basename(args.file))[0])
